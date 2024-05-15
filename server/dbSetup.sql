@@ -15,7 +15,7 @@ CREATE TABLE
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     creatorId VARCHAR(255) NOT NULL,
     title VARCHAR(255) NOT NULL,
-    description VARCHAR(500) NOT NULL,
+    description VARCHAR(500),
     coverImg VARCHAR(1000) NOT NULL,
     archived BOOLEAN NOT NULL DEFAULT false,
     category ENUM (

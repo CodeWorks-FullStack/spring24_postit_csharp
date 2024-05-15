@@ -12,4 +12,21 @@ public class AlbumsController : ControllerBase
     _albumsService = albumsService;
     _auth0Provider = auth0Provider;
   }
+
+  [Authorize]
+  [HttpPost]
+  public async Task<ActionResult<Album>> CreateAlbum([FromBody] Album albumData)
+  {
+    try
+    {
+      Account userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+      albumData.CreatorId = userInfo.Id;
+      Album album = _albumsService.CreateAlbum(albumData);
+      return Ok(album);
+    }
+    catch (Exception exception)
+    {
+      return BadRequest(exception.Message);
+    }
+  }
 }
