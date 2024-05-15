@@ -1,3 +1,4 @@
+
 namespace postit_csharp.Services;
 
 public class PicturesService
@@ -7,5 +8,11 @@ public class PicturesService
   public PicturesService(PicturesRepository repository)
   {
     _repository = repository;
+  }
+
+  internal Picture CreatePicture(Picture pictureData)
+  {
+    Picture picture = _repository.CreatePicture(pictureData);
+    return picture;
   }
 }
