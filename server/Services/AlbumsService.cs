@@ -12,6 +12,20 @@ public class AlbumsService
     _repository = repository;
   }
 
+  internal Album ArchiveAlbum(int albumId, string userId)
+  {
+    Album albumToArchive = GetAlbumById(albumId);
+
+    if (albumToArchive.CreatorId != userId)
+    {
+      throw new Exception("CANNOT ARCHIVE AN ALBUM YOU DID NOT CREATE, PAL");
+    }
+
+    Album archivedAlbum = _repository.ArchiveAlbum(albumId);
+
+    return archivedAlbum;
+  }
+
   internal Album CreateAlbum(Album albumData)
   {
     Album album = _repository.CreateAlbum(albumData);

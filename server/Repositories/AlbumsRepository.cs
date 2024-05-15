@@ -1,6 +1,7 @@
 
 
 
+
 namespace postit_csharp.Repositories;
 
 public class AlbumsRepository
@@ -10,6 +11,30 @@ public class AlbumsRepository
   public AlbumsRepository(IDbConnection db)
   {
     _db = db;
+  }
+
+  internal Album ArchiveAlbum(int albumId)
+  {
+    string sql = @"
+    UPDATE 
+    albums 
+    SET archived = true 
+    WHERE id = @albumId;
+    
+    SELECT
+    albums.*,
+    accounts.*
+    FROM albums
+    JOIN accounts ON accounts.id = albums.creatorId
+    WHERE albums.id = @albumId;";
+
+    Album album = _db.Query<Album, Profile, Album>(sql, (album, profile) =>
+    {
+      album.Creator = profile;
+      return album;
+    }, new { albumId }).FirstOrDefault();
+
+    return album;
   }
 
   internal Album CreateAlbum(Album albumData)
