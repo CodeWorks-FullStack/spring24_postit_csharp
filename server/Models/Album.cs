@@ -11,7 +11,5 @@ public class Album
   public string CoverImg { get; set; }
   public bool Archived { get; set; }
   public string Category { get; set; }
-
-  // FIXME make this better
-  public Account Creator { get; set; }
+  public Profile Creator { get; set; }
 }
