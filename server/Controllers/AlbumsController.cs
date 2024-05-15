@@ -43,4 +43,18 @@ public class AlbumsController : ControllerBase
       return BadRequest(exception.Message);
     }
   }
+
+  [HttpGet("{albumId}")]
+  public ActionResult<Album> GetAlbumById(int albumId)
+  {
+    try
+    {
+      Album album = _albumsService.GetAlbumById(albumId);
+      return Ok(album);
+    }
+    catch (Exception exception)
+    {
+      return BadRequest(exception.Message);
+    }
+  }
 }
