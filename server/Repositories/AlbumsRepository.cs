@@ -13,6 +13,12 @@ public class AlbumsRepository
     _db = db;
   }
 
+  private Album PopulateCreator(Album album, Profile profile)
+  {
+    album.Creator = profile;
+    return album;
+  }
+
   internal Album ArchiveAlbum(int albumId)
   {
     string sql = @"
@@ -28,11 +34,7 @@ public class AlbumsRepository
     JOIN accounts ON accounts.id = albums.creatorId
     WHERE albums.id = @albumId;";
 
-    Album album = _db.Query<Album, Profile, Album>(sql, (album, profile) =>
-    {
-      album.Creator = profile;
-      return album;
-    }, new { albumId }).FirstOrDefault();
+    Album album = _db.Query<Album, Profile, Album>(sql, PopulateCreator, new { albumId }).FirstOrDefault();
 
     return album;
   }
@@ -51,11 +53,13 @@ public class AlbumsRepository
     JOIN accounts ON albums.creatorId = accounts.id
     WHERE albums.id = LAST_INSERT_ID();";
 
-    Album album = _db.Query<Album, Account, Album>(sql, (album, account) =>
-    {
-      album.Creator = account;
-      return album;
-    }, albumData).FirstOrDefault();
+    // Album album = _db.Query<Album, Account, Album>(sql, (album, account) =>
+    // {
+    //   album.Creator = account;
+    //   return album;
+    // }, albumData).FirstOrDefault();
+
+    Album album = _db.Query<Album, Profile, Album>(sql, PopulateCreator, albumData).FirstOrDefault();
 
     return album;
   }
@@ -70,11 +74,7 @@ public class AlbumsRepository
     JOIN accounts ON accounts.id = albums.creatorId
     WHERE albums.id = @albumId;";
 
-    Album album = _db.Query<Album, Profile, Album>(sql, (album, profile) =>
-    {
-      album.Creator = profile;
-      return album;
-    }, new { albumId }).FirstOrDefault();
+    Album album = _db.Query<Album, Profile, Album>(sql, PopulateCreator, new { albumId }).FirstOrDefault();
 
     return album;
   }
@@ -88,11 +88,7 @@ public class AlbumsRepository
     FROM albums
     JOIN accounts ON albums.creatorId = accounts.id;";
 
-    List<Album> albums = _db.Query<Album, Profile, Album>(sql, (album, profile) =>
-    {
-      album.Creator = profile;
-      return album;
-    }).ToList();
+    List<Album> albums = _db.Query<Album, Profile, Album>(sql, PopulateCreator).ToList();
 
     return albums;
   }
