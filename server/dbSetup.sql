@@ -1,3 +1,4 @@
+-- Active: 1715633441965@@127.0.0.1@3306@adaptable_shaman_540684_db
 CREATE TABLE
   IF NOT EXISTS accounts (
     id VARCHAR(255) NOT NULL primary key COMMENT 'primary key',
@@ -42,3 +43,30 @@ CREATE TABLE
     FOREIGN KEY (creatorId) REFERENCES accounts (id) ON DELETE CASCADE,
     FOREIGN KEY (albumId) REFERENCES albums (id) ON DELETE CASCADE
   );
+
+CREATE TABLE
+  albumMembers (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    accountId VARCHAR(255) NOT NULL,
+    albumId INT NOT NULL,
+    FOREIGN KEY (accountId) REFERENCES accounts (id) ON DELETE CASCADE,
+    FOREIGN KEY (albumId) REFERENCES albums (id) ON DELETE CASCADE,
+    UNIQUE (albumId, accountId) -- UNIQUE constraint means that you can only collaborate on an album one single time
+  );
+
+SELECT
+  *
+FROM
+  accounts;
+
+SELECT
+  *
+FROM
+  albums;
+
+INSERT INTO
+  `albumMembers` (`accountId`, `albumId`)
+VALUES
+  ('65f87bc1e02f1ee243874743', 2);
