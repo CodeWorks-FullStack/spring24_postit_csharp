@@ -3,8 +3,6 @@
 
 
 
-using System.Globalization;
-
 namespace postit_csharp.Repositories;
 
 public class AlbumMembersRepository
@@ -79,8 +77,7 @@ public class AlbumMembersRepository
     accounts.* 
     FROM albumMembers 
     JOIN accounts ON accounts.id = albumMembers.accountId
-    WHERE albumMembers.albumId = @albumId
-    ;";
+    WHERE albumMembers.albumId = @albumId;";
 
     //                                                        | Many-to-Many
     //                                                        |             | Profile View-Model
@@ -107,6 +104,9 @@ public class AlbumMembersRepository
     JOIN accounts ON albums.creatorId = accounts.id
     WHERE albumMembers.accountId = @userId;";
 
+    //                                                        many-to-many      album          creator   return type for map function 
+    //                                                            |               |               |             |
+    //                                                            V               V               V             V
     List<AlbumCollaboration> albumCollaborations = _db.Query<AlbumMember, AlbumCollaboration, Profile, AlbumCollaboration>(sql, (albumMember, album, profile) =>
     {
       album.AlbumMemberId = albumMember.Id; // ID of many-to-many
