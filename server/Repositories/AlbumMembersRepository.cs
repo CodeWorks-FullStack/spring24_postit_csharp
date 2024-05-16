@@ -30,11 +30,15 @@ public class AlbumMembersRepository
     JOIN accounts ON accounts.id = albumMembers.accountId
     WHERE albumMembers.id = LAST_INSERT_ID();";
 
+    //                                        | Many-to-Many object
+    //                                        |             | Profile View Model object.
+    //                                        |             |
+    //                                        V             V
     MemberProfile albumMember = _db.Query<AlbumMember, MemberProfile, MemberProfile>
     (sql, (albumMember, profile) =>
     {
-      profile.AlbumId = albumMember.AlbumId;
-      profile.AlbumMemberId = albumMember.Id;
+      profile.AlbumMemberId = albumMember.Id; // ID of many-to-many
+      profile.AlbumId = albumMember.AlbumId; // ID of album from many-to-many
       return profile;
     }, albumMemberData).FirstOrDefault();
 
@@ -105,9 +109,9 @@ public class AlbumMembersRepository
 
     List<AlbumCollaboration> albumCollaborations = _db.Query<AlbumMember, AlbumCollaboration, Profile, AlbumCollaboration>(sql, (albumMember, album, profile) =>
     {
-      album.AlbumMemberId = albumMember.Id;
-      album.AccountId = albumMember.AccountId;
-      album.Creator = profile;
+      album.AlbumMemberId = albumMember.Id; // ID of many-to-many
+      album.AccountId = albumMember.AccountId; // ID of account from many-to-many
+      album.Creator = profile; // creator of the album
       return album;
     }, new { userId }).ToList();
 

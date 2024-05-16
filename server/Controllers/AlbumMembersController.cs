@@ -15,6 +15,9 @@ public class AlbumMembersController : ControllerBase
 
   [Authorize]
   [HttpPost]
+  //                                  | The profile view model
+  //                                  |                                         | The many-to-many object
+  //                                  V                                         V
   public async Task<ActionResult<MemberProfile>> CreateAlbumMember([FromBody] AlbumMember albumMemberData)
   {
     try
