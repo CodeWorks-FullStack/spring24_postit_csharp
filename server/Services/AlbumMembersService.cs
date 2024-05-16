@@ -1,5 +1,6 @@
 
 
+
 namespace postit_csharp.Services;
 
 public class AlbumMembersService
@@ -21,5 +22,11 @@ public class AlbumMembersService
   {
     List<MemberProfile> albumMembersProfiles = _repository.GetAlbumMemberProfilesByAlbumId(albumId);
     return albumMembersProfiles;
+  }
+
+  internal List<AlbumCollaboration> GetMyAlbumCollaborations(string userId)
+  {
+    List<AlbumCollaboration> albumCollaborations = _repository.GetMyAlbumCollaborations(userId);
+    return albumCollaborations;
   }
 }
