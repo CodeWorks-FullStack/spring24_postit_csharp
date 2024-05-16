@@ -70,3 +70,8 @@ INSERT INTO
   `albumMembers` (`accountId`, `albumId`)
 VALUES
   ('65f87bc1e02f1ee243874743', 2);
+
+SELECT
+  *
+FROM
+  albumMembers;
