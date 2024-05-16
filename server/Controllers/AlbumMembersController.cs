@@ -15,14 +15,30 @@ public class AlbumMembersController : ControllerBase
 
   [Authorize]
   [HttpPost]
-  public async Task<ActionResult<AlbumMember>> CreateAlbumMember([FromBody] AlbumMember albumMemberData)
+  public async Task<ActionResult<MemberProfile>> CreateAlbumMember([FromBody] AlbumMember albumMemberData)
   {
     try
     {
       Account userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
       albumMemberData.AccountId = userInfo.Id;
-      AlbumMember albumMember = _albumMembersService.CreateAlbumMember(albumMemberData);
+      MemberProfile albumMember = _albumMembersService.CreateAlbumMember(albumMemberData);
       return Ok(albumMember);
+    }
+    catch (Exception exception)
+    {
+      return BadRequest(exception.Message);
+    }
+  }
+
+  [Authorize]
+  [HttpDelete("{albumMemberId}")]
+  public async Task<ActionResult<string>> DestroyAlbumMember(int albumMemberId)
+  {
+    try
+    {
+      Account userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+      string message = _albumMembersService.DestroyAlbumMember(albumMemberId, userInfo.Id);
+      return Ok(message);
     }
     catch (Exception exception)
     {

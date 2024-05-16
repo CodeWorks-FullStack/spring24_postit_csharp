@@ -1,6 +1,7 @@
 
 
 
+
 namespace postit_csharp.Services;
 
 public class AlbumMembersService
@@ -12,10 +13,36 @@ public class AlbumMembersService
     _repository = repository;
   }
 
-  internal AlbumMember CreateAlbumMember(AlbumMember albumMemberData)
+  internal MemberProfile CreateAlbumMember(AlbumMember albumMemberData)
   {
-    AlbumMember albumMember = _repository.CreateAlbumMember(albumMemberData);
+    MemberProfile albumMember = _repository.CreateAlbumMember(albumMemberData);
     return albumMember;
+  }
+
+  internal AlbumMember GetAlbumMemberById(int albumMemberId)
+  {
+    AlbumMember albumMember = _repository.GetAlbumMemberById(albumMemberId);
+
+    if (albumMember == null)
+    {
+      throw new Exception($"Invalid id: {albumMemberId}");
+    }
+
+    return albumMember;
+  }
+
+  internal string DestroyAlbumMember(int albumMemberId, string userId)
+  {
+    AlbumMember albumMemberToDestroy = GetAlbumMemberById(albumMemberId);
+
+    if (albumMemberToDestroy.AccountId != userId)
+    {
+      throw new Exception("NOT YOUR ALBUM MEMBER, FRIEND-O 🙎‍♂️");
+    }
+
+    _repository.DestroyAlbumMember(albumMemberId);
+
+    return "No longer an album member!";
   }
 
   internal List<MemberProfile> GetAlbumMemberProfilesByAlbumId(int albumId)

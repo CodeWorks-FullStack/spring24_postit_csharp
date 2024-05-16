@@ -1,6 +1,10 @@
 
 
 
+
+
+using System.Globalization;
+
 namespace postit_csharp.Repositories;
 
 public class AlbumMembersRepository
@@ -12,17 +16,53 @@ public class AlbumMembersRepository
     _db = db;
   }
 
-  internal AlbumMember CreateAlbumMember(AlbumMember albumMemberData)
+  internal MemberProfile CreateAlbumMember(AlbumMember albumMemberData)
   {
-    // FIXME make this better
     string sql = @"
     INSERT INTO
     albumMembers(albumId, accountId)
     VALUES(@AlbumId, @AccountId);
 
-    SELECT * FROM albumMembers WHERE id = LAST_INSERT_ID();";
+    SELECT 
+    albumMembers.*,
+    accounts.* 
+    FROM albumMembers
+    JOIN accounts ON accounts.id = albumMembers.accountId
+    WHERE albumMembers.id = LAST_INSERT_ID();";
 
-    AlbumMember albumMember = _db.Query<AlbumMember>(sql, albumMemberData).FirstOrDefault();
+    MemberProfile albumMember = _db.Query<AlbumMember, MemberProfile, MemberProfile>
+    (sql, (albumMember, profile) =>
+    {
+      profile.AlbumId = albumMember.AlbumId;
+      profile.AlbumMemberId = albumMember.Id;
+      return profile;
+    }, albumMemberData).FirstOrDefault();
+
+    return albumMember;
+  }
+
+  internal void DestroyAlbumMember(int albumMemberId)
+  {
+    string sql = "DELETE FROM albumMembers WHERE id = @albumMemberId LIMIT 1;";
+
+    int rowsAffected = _db.Execute(sql, new { albumMemberId });
+
+    if (rowsAffected == 0)
+    {
+      throw new Exception("DELETE failed!");
+    }
+
+    if (rowsAffected > 1)
+    {
+      throw new Exception("Call the police, something really bad happened 🚓");
+    }
+  }
+
+  internal AlbumMember GetAlbumMemberById(int albumMemberId)
+  {
+    string sql = "SELECT * FROM albumMembers WHERE id = @albumMemberId;";
+
+    AlbumMember albumMember = _db.Query<AlbumMember>(sql, new { albumMemberId }).FirstOrDefault();
 
     return albumMember;
   }
